@@ -1,0 +1,17 @@
+version: '3'
+
+tasks:
+  verilog:
+    desc: "Compile Verilog files"
+    cmds:
+      - cabal run clash -- Example.Project --verilog
+  
+  systemverilog:
+    desc: "Compile SystemVerilog files"
+    cmds:
+      - cabal run clash -- Example.Project --systemverilog
+  
+  clashi:
+    desc: "Start interactive shell"
+    cmds:
+      - cabal run clashi
