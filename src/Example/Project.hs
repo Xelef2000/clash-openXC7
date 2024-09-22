@@ -19,36 +19,22 @@ createDomain vSystem{vName="Dom50", vPeriod=hzToPeriod 50e6}
 -- Top entities must be monomorphic, meaning we have to specify all type variables.
 -- In this case, we are using the @Dom50@ domain, which we created with @createDomain@
 -- and we are using 8-bit unsigned numbers.
-topEntity ::
-  Clock Dom50 ->
-  Reset Dom50 ->
-  Enable Dom50 ->
-  Signal Dom50 (Unsigned 8) ->
-  Signal Dom50 (Unsigned 8)
-topEntity = exposeClockResetEnable accum
+topEntity
+    :: "BTN" ::: Signal System Bit
+    -> "LED" ::: Signal System Bit
+topEntity = blinky
 
 -- To specify the names of the ports of our top entity, we create a @Synthesize@ annotation.
 {-# ANN topEntity
   (Synthesize
-    { t_name = "accum"
-    , t_inputs = [ PortName "CLK"
-                 , PortName "RST"
-                 , PortName "EN"
-                 , PortName "DIN"
+    { t_name = "blinky"
+    , t_inputs = [ PortName "BTN"
                  ]
-    , t_output = PortName "DOUT"
+    , t_output = PortName "LED"
     }) #-}
 
 -- Make sure GHC does not apply any optimizations to the boundaries of the design.
 -- For GHC versions 9.2 or older, use: {-# NOINLINE topEntity #-}
 {-# OPAQUE topEntity #-}
-
--- | A simple accumulator that works on unsigned numbers of any size.
--- It has hidden clock, reset, and enable signals.
-accum ::
-  (HiddenClockResetEnable dom, KnownNat n) =>
-  Signal dom (Unsigned n) ->
-  Signal dom (Unsigned n)
-accum = mealy accumT 0
- where
-  accumT s i = (s + i, s)
+blinky :: Signal System Bit -> Signal System Bit
+blinky = fmap complement

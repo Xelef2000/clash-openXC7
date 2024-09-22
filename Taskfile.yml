@@ -5,12 +5,18 @@ tasks:
     desc: "Compile Verilog files"
     cmds:
       - cabal run clash -- Example.Project --verilog
-  
+
   systemverilog:
     desc: "Compile SystemVerilog files"
     cmds:
       - cabal run clash -- Example.Project --systemverilog
-  
+
+  build:
+    desc: "Build project"
+    cmds:
+      - cabal run clash -- Example.Project --verilog
+      - cp verilog/Example.Project.topEntity/blinky.v ./flash/blinky.v
+
   clashi:
     desc: "Start interactive shell"
     cmds:
